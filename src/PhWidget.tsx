@@ -88,8 +88,10 @@ export const PhWidget: React.FC<PhWidgetProps> = ({
   const pointerLeft = `${normalized * 100}%`;
 
   const containerStyle: React.CSSProperties = {
-    display: 'grid',
-    gridTemplateRows: 'auto 1fr',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
     gap: '12px',
     width: '100%',
     height: '100%',
@@ -99,13 +101,15 @@ export const PhWidget: React.FC<PhWidgetProps> = ({
     color: '#E5EDF9',
     borderRadius: containerRadius,
     fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    textAlign: 'center',
   };
 
   const headerStyle: React.CSSProperties = {
     display: 'flex',
-    alignItems: 'baseline',
-    justifyContent: 'space-between',
-    gap: '8px',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '4px',
     width: '100%',
   };
 
@@ -125,6 +129,7 @@ export const PhWidget: React.FC<PhWidgetProps> = ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
   };
 
   const barStyle: React.CSSProperties = {
