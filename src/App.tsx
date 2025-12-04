@@ -17,8 +17,14 @@ const App: React.FC = () => {
   const [pointerImage, setPointerImage] = useState('');
   const [pointerColor, setPointerColor] = useState('#ffffff');
   const [fontSize, setFontSize] = useState(40);
+  const [labelFontSize, setLabelFontSize] = useState(14);
   const [heightPct, setHeightPct] = useState(25);
+  const [heightPctInput, setHeightPctInput] = useState('25');
   const [background, setBackground] = useState('#0B1220');
+  const [panelWidth, setPanelWidth] = useState(460);
+  const [panelHeight, setPanelHeight] = useState(320);
+  const [pointerSize, setPointerSize] = useState(28);
+  const [pointerOffsetPct, setPointerOffsetPct] = useState(0);
 
   const containerStyle: React.CSSProperties = {
     minHeight: '100vh',
@@ -39,7 +45,9 @@ const App: React.FC = () => {
     background,
     display: 'flex',
     flexDirection: 'column',
-    minHeight: '320px',
+    width: `${panelWidth}px`,
+    height: `${panelHeight}px`,
+    minHeight: '240px',
   };
 
   const controlsStyle: React.CSSProperties = {
@@ -75,6 +83,22 @@ const App: React.FC = () => {
     gap: '12px',
   };
 
+  const updateHeightPct = (raw: string) => {
+    setHeightPctInput(raw);
+    const parsed = parseFloat(raw);
+    if (!Number.isNaN(parsed)) {
+      setHeightPct(parsed);
+    }
+  };
+
+  const parseNumberOrFallback = (value: string, fallback: number, minValue?: number, maxValue?: number) => {
+    const parsed = parseFloat(value);
+    if (Number.isNaN(parsed)) return fallback;
+    if (minValue !== undefined && parsed < minValue) return minValue;
+    if (maxValue !== undefined && parsed > maxValue) return maxValue;
+    return parsed;
+  };
+
   return (
     <div style={containerStyle}>
       <div style={panelStyle}>
@@ -93,7 +117,10 @@ const App: React.FC = () => {
           pointerColor={pointerColor}
           background={background}
           fontSize={fontSize}
+          labelFontSize={labelFontSize}
           heightPct={heightPct}
+          pointerSize={pointerSize}
+          pointerOffsetPct={pointerOffsetPct}
         />
       </div>
 
@@ -159,19 +186,92 @@ const App: React.FC = () => {
 
         <div style={fieldGroup}>
           <div style={labelStyle}>
+            <label>Tamanho da fonte do rótulo</label>
+            <input
+              style={inputStyle}
+              type="number"
+              min={8}
+              max={48}
+              value={labelFontSize}
+              onChange={(e) => setLabelFontSize(parseInt(e.target.value, 10) || 12)}
+            />
+          </div>
+          <div style={labelStyle}>
             <label>Altura da barra (%)</label>
             <input
               style={inputStyle}
               type="number"
               min={10}
               max={80}
-              value={heightPct}
-              onChange={(e) => setHeightPct(parseInt(e.target.value, 10) || 25)}
+              value={heightPctInput}
+              onChange={(e) => updateHeightPct(e.target.value)}
+              onBlur={() => updateHeightPct(`${parseNumberOrFallback(heightPctInput, 25, 10, 80)}`)}
             />
           </div>
+        </div>
+
+        <div style={fieldGroup}>
           <div style={labelStyle}>
             <label>Cor de fundo</label>
             <input style={inputStyle} type="color" value={background} onChange={(e) => setBackground(e.target.value)} />
+          </div>
+          <div style={labelStyle}>
+            <label>Largura do widget (px)</label>
+            <input
+              style={inputStyle}
+              type="number"
+              min={240}
+              max={1200}
+              value={panelWidth}
+              onChange={(e) => setPanelWidth(parseNumberOrFallback(e.target.value, panelWidth, 240, 1200))}
+            />
+          </div>
+        </div>
+
+        <div style={fieldGroup}>
+          <div style={labelStyle}>
+            <label>Altura do widget (px)</label>
+            <input
+              style={inputStyle}
+              type="number"
+              min={220}
+              max={800}
+              value={panelHeight}
+              onChange={(e) => setPanelHeight(parseNumberOrFallback(e.target.value, panelHeight, 220, 800))}
+            />
+          </div>
+          <div style={labelStyle}>
+            <label>Altura do ponteiro (px)</label>
+            <input
+              style={inputStyle}
+              type="number"
+              min={10}
+              max={72}
+              value={pointerSize}
+              onChange={(e) => setPointerSize(parseNumberOrFallback(e.target.value, pointerSize, 10, 72))}
+            />
+          </div>
+        </div>
+
+        <div style={fieldGroup}>
+          <div style={labelStyle}>
+            <label>Offset vertical do ponteiro (% da barra)</label>
+            <input
+              style={inputStyle}
+              type="number"
+              min={-50}
+              max={50}
+              value={pointerOffsetPct}
+              onChange={(e) => setPointerOffsetPct(parseNumberOrFallback(e.target.value, pointerOffsetPct, -50, 50))}
+            />
+          </div>
+          <div style={labelStyle}>
+            <label>Notas de responsividade</label>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <span style={{ fontSize: 12, opacity: 0.65 }}>
+                Use os campos de largura/altura para validar o comportamento fluido do widget dentro do painel.
+              </span>
+            </div>
           </div>
         </div>
 

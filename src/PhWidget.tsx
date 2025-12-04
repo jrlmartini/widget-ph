@@ -31,6 +31,8 @@ export interface PhWidgetProps {
   background?: string;
   /** Tamanho da fonte usada no cabeçalho */
   fontSize?: number;
+  /** Tamanho da fonte do label (ex.: "pH") */
+  labelFontSize?: number;
   /** Altura da barra em % em relação ao container */
   heightPct?: number;
   /** Raio do container para integração com estilização do painel */
@@ -39,6 +41,10 @@ export interface PhWidgetProps {
   barRadius?: number;
   /** Texto exibido no cabeçalho ao lado do valor */
   label?: string;
+  /** Altura do ponteiro (aplicada à imagem ou fallback) */
+  pointerSize?: number;
+  /** Deslocamento vertical do ponteiro em relação ao centro da barra (positivo sobe) */
+  pointerOffsetPct?: number;
 }
 
 const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
@@ -59,10 +65,13 @@ export const PhWidget: React.FC<PhWidgetProps> = ({
   pointerColor = '#ffffff',
   background = '#0B1220',
   fontSize = 40,
+  labelFontSize,
   heightPct = 25,
   containerRadius = 8,
   barRadius = 20,
   label = 'pH',
+  pointerSize = 28,
+  pointerOffsetPct = 0,
 }) => {
   const normalized = useMemo(() => {
     const safeRange = max - min === 0 ? 1 : max - min;
@@ -107,7 +116,7 @@ export const PhWidget: React.FC<PhWidgetProps> = ({
   };
 
   const labelStyle: React.CSSProperties = {
-    fontSize: fontSize * 0.35,
+    fontSize: labelFontSize ?? fontSize * 0.35,
     opacity: 0.8,
     letterSpacing: '0.02em',
   };
@@ -131,23 +140,24 @@ export const PhWidget: React.FC<PhWidgetProps> = ({
 
   const pointerBaseStyle: React.CSSProperties = {
     position: 'absolute',
-    top: '50%',
+    top: `calc(50% - ${pointerOffsetPct}%)`,
     left: pointerLeft,
     transform: 'translate(-50%, -50%)',
     transition: animate ? 'left 400ms ease' : undefined,
     filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))',
   };
 
+  const pointerBase = pointerSize * 0.7;
   const pointerFallback: React.CSSProperties = {
     width: 0,
     height: 0,
-    borderLeft: '8px solid transparent',
-    borderRight: '8px solid transparent',
-    borderTop: `14px solid ${pointerColor}`,
+    borderLeft: `${pointerBase * 0.5}px solid transparent`,
+    borderRight: `${pointerBase * 0.5}px solid transparent`,
+    borderTop: `${pointerSize}px solid ${pointerColor}`,
   };
 
   const pointerImageStyle: React.CSSProperties = {
-    height: '28px',
+    height: pointerSize,
     width: 'auto',
     objectFit: 'contain',
     display: 'block',
