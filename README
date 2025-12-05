@@ -1,1 +1,11 @@
-Whats up?
+# Widget pH (Protótipo React + Vite)
+
+Protótipo de um widget de pH responsivo pensado para ser adaptado ao Grafana Panel SDK. O componente principal (`PhWidget`) exibe o valor de pH, barra com degradê configurável (2 ou 3 cores) e ponteiro animado com imagem ou fallback em CSS.
+
+## Scripts
+- `npm install` — instala dependências (requer Node.js).
+- `npm run dev` — ambiente de desenvolvimento com hot reload (Vite).
+- `npm run build` — validação TypeScript e build de produção.
+- `npm run preview` — pré-visualização do build.
+
+> Obs.: o ambiente deste exercício pode não ter Node.js disponível. Instale-o localmente para testar o protótipo.
