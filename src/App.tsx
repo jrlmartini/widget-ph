@@ -35,6 +35,10 @@ const useNumberControl = (
   const handleChange = (raw: string) => {
     // Não normalize enquanto o usuário digita para evitar travar remoções.
     setText(raw);
+    const parsed = normalizeNumber(raw, number, options);
+    if (!Number.isNaN(parsed)) {
+      setNumber(parsed);
+    }
   };
 
   const handleBlur = () => commitValue(text);

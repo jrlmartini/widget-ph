@@ -131,6 +131,7 @@ export const PhWidget: React.FC<PhWidgetProps> = ({
     justifyContent: 'center',
     width: '100%',
     flex: 1,
+    overflow: 'visible',
   };
 
   const barStyle: React.CSSProperties = {
@@ -151,6 +152,7 @@ export const PhWidget: React.FC<PhWidgetProps> = ({
     transform: 'translate(-50%, -50%)',
     transition: animate ? 'left 400ms ease' : undefined,
     filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))',
+    zIndex: 2,
   };
 
   const pointerBase = pointerSize * 0.7;
