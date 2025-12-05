@@ -26,22 +26,26 @@ const useNumberControl = (
   const [number, setNumber] = useState(initial);
   const [text, setText] = useState(String(initial));
 
-  const handleChange = (raw: string) => {
-    setText(raw);
-    if (raw.trim() === '') return;
-    const parsed = options.integer ? parseInt(raw, 10) : parseFloat(raw);
-    if (!Number.isNaN(parsed)) {
-      setNumber(clampNumber(parsed, options.min, options.max));
-    }
-  };
-
-  const handleBlur = () => {
-    const normalized = normalizeNumber(text, number, options);
+  const commitValue = (raw: string) => {
+    const normalized = normalizeNumber(raw, number, options);
     setNumber(normalized);
     setText(String(normalized));
   };
 
-  return { number, text, setNumber, setText, handleChange, handleBlur } as const;
+  const handleChange = (raw: string) => {
+    // Não normalize enquanto o usuário digita para evitar travar remoções.
+    setText(raw);
+  };
+
+  const handleBlur = () => commitValue(text);
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      commitValue(text);
+    }
+  };
+
+  return { number, text, setNumber, setText, handleChange, handleBlur, handleKeyDown } as const;
 };
 
 const normalizeHex = (raw: string) => {
@@ -218,6 +222,7 @@ const App: React.FC = () => {
               type="text"
               value={minControl.text}
               onChange={(e) => minControl.handleChange(e.target.value)}
+              onKeyDown={minControl.handleKeyDown}
               onBlur={minControl.handleBlur}
             />
           </div>
@@ -228,6 +233,7 @@ const App: React.FC = () => {
               type="text"
               value={maxControl.text}
               onChange={(e) => maxControl.handleChange(e.target.value)}
+              onKeyDown={maxControl.handleKeyDown}
               onBlur={maxControl.handleBlur}
             />
           </div>
@@ -241,6 +247,7 @@ const App: React.FC = () => {
               type="text"
               value={decimalsControl.text}
               onChange={(e) => decimalsControl.handleChange(e.target.value)}
+              onKeyDown={decimalsControl.handleKeyDown}
               onBlur={decimalsControl.handleBlur}
             />
           </div>
@@ -251,6 +258,7 @@ const App: React.FC = () => {
               type="text"
               value={fontSizeControl.text}
               onChange={(e) => fontSizeControl.handleChange(e.target.value)}
+              onKeyDown={fontSizeControl.handleKeyDown}
               onBlur={fontSizeControl.handleBlur}
             />
           </div>
@@ -264,6 +272,7 @@ const App: React.FC = () => {
               type="text"
               value={labelFontSizeControl.text}
               onChange={(e) => labelFontSizeControl.handleChange(e.target.value)}
+              onKeyDown={labelFontSizeControl.handleKeyDown}
               onBlur={labelFontSizeControl.handleBlur}
             />
           </div>
@@ -274,6 +283,7 @@ const App: React.FC = () => {
               type="text"
               value={heightControl.text}
               onChange={(e) => heightControl.handleChange(e.target.value)}
+              onKeyDown={heightControl.handleKeyDown}
               onBlur={heightControl.handleBlur}
             />
           </div>
@@ -298,6 +308,7 @@ const App: React.FC = () => {
               type="text"
               value={panelWidthControl.text}
               onChange={(e) => panelWidthControl.handleChange(e.target.value)}
+              onKeyDown={panelWidthControl.handleKeyDown}
               onBlur={panelWidthControl.handleBlur}
             />
           </div>
@@ -311,6 +322,7 @@ const App: React.FC = () => {
               type="text"
               value={panelHeightControl.text}
               onChange={(e) => panelHeightControl.handleChange(e.target.value)}
+              onKeyDown={panelHeightControl.handleKeyDown}
               onBlur={panelHeightControl.handleBlur}
             />
           </div>
@@ -321,6 +333,7 @@ const App: React.FC = () => {
               type="text"
               value={pointerSizeControl.text}
               onChange={(e) => pointerSizeControl.handleChange(e.target.value)}
+              onKeyDown={pointerSizeControl.handleKeyDown}
               onBlur={pointerSizeControl.handleBlur}
             />
           </div>
@@ -334,6 +347,7 @@ const App: React.FC = () => {
               type="text"
               value={pointerOffsetControl.text}
               onChange={(e) => pointerOffsetControl.handleChange(e.target.value)}
+              onKeyDown={pointerOffsetControl.handleKeyDown}
               onBlur={pointerOffsetControl.handleBlur}
             />
           </div>
