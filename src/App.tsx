@@ -175,6 +175,16 @@ const App: React.FC = () => {
     gap: '12px',
   };
 
+  const colorPickerStyle: React.CSSProperties = {
+    width: 48,
+    height: 36,
+    padding: 0,
+    border: '1px solid rgba(255,255,255,0.1)',
+    background: 'transparent',
+    borderRadius: 6,
+    cursor: 'pointer',
+  };
+
   return (
     <div style={containerStyle}>
       <div style={panelStyle}>
@@ -292,14 +302,22 @@ const App: React.FC = () => {
         <div style={fieldGroup}>
           <div style={labelStyle}>
             <label>Cor de fundo</label>
-            <input
-              style={inputStyle}
-              type="text"
-              value={backgroundInput}
-              onChange={(e) => handleColorChange(e.target.value, setBackgroundInput, setBackground, background)}
-              onBlur={() => handleColorBlur(backgroundInput, setBackgroundInput, setBackground, background)}
-              placeholder="#0B1220"
-            />
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                style={colorPickerStyle}
+                type="color"
+                value={background}
+                onChange={(e) => handleColorChange(e.target.value, setBackgroundInput, setBackground, background)}
+              />
+              <input
+                style={{ ...inputStyle, flex: 1 }}
+                type="text"
+                value={backgroundInput}
+                onChange={(e) => handleColorChange(e.target.value, setBackgroundInput, setBackground, background)}
+                onBlur={() => handleColorBlur(backgroundInput, setBackgroundInput, setBackground, background)}
+                placeholder="#0B1220"
+              />
+            </div>
           </div>
           <div style={labelStyle}>
             <label>Largura do widget (px)</label>
@@ -364,39 +382,63 @@ const App: React.FC = () => {
         <div style={fieldGroup}>
           <div style={labelStyle}>
             <label>Cor inicial</label>
-            <input
-              style={inputStyle}
-              type="text"
-              value={startColorInput}
-              onChange={(e) => handleColorChange(e.target.value, setStartColorInput, setStartColor, startColor)}
-              onBlur={() => handleColorBlur(startColorInput, setStartColorInput, setStartColor, startColor)}
-              placeholder="#F87171"
-            />
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                style={colorPickerStyle}
+                type="color"
+                value={startColor}
+                onChange={(e) => handleColorChange(e.target.value, setStartColorInput, setStartColor, startColor)}
+              />
+              <input
+                style={{ ...inputStyle, flex: 1 }}
+                type="text"
+                value={startColorInput}
+                onChange={(e) => handleColorChange(e.target.value, setStartColorInput, setStartColor, startColor)}
+                onBlur={() => handleColorBlur(startColorInput, setStartColorInput, setStartColor, startColor)}
+                placeholder="#F87171"
+              />
+            </div>
           </div>
           <div style={labelStyle}>
             <label>Cor final</label>
-            <input
-              style={inputStyle}
-              type="text"
-              value={endColorInput}
-              onChange={(e) => handleColorChange(e.target.value, setEndColorInput, setEndColor, endColor)}
-              onBlur={() => handleColorBlur(endColorInput, setEndColorInput, setEndColor, endColor)}
-              placeholder="#34D399"
-            />
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                style={colorPickerStyle}
+                type="color"
+                value={endColor}
+                onChange={(e) => handleColorChange(e.target.value, setEndColorInput, setEndColor, endColor)}
+              />
+              <input
+                style={{ ...inputStyle, flex: 1 }}
+                type="text"
+                value={endColorInput}
+                onChange={(e) => handleColorChange(e.target.value, setEndColorInput, setEndColor, endColor)}
+                onBlur={() => handleColorBlur(endColorInput, setEndColorInput, setEndColor, endColor)}
+                placeholder="#34D399"
+              />
+            </div>
           </div>
         </div>
 
         {gradientMode === 'three' && (
           <div style={labelStyle}>
             <label>Cor intermediária</label>
-            <input
-              style={inputStyle}
-              type="text"
-              value={midColorInput}
-              onChange={(e) => handleColorChange(e.target.value, setMidColorInput, setMidColor, midColor)}
-              onBlur={() => handleColorBlur(midColorInput, setMidColorInput, setMidColor, midColor)}
-              placeholder="#60A5FA"
-            />
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                style={colorPickerStyle}
+                type="color"
+                value={midColor}
+                onChange={(e) => handleColorChange(e.target.value, setMidColorInput, setMidColor, midColor)}
+              />
+              <input
+                style={{ ...inputStyle, flex: 1 }}
+                type="text"
+                value={midColorInput}
+                onChange={(e) => handleColorChange(e.target.value, setMidColorInput, setMidColor, midColor)}
+                onBlur={() => handleColorBlur(midColorInput, setMidColorInput, setMidColor, midColor)}
+                placeholder="#60A5FA"
+              />
+            </div>
           </div>
         )}
 
@@ -414,14 +456,22 @@ const App: React.FC = () => {
         <div style={fieldGroup}>
           <div style={labelStyle}>
             <label>Cor do ponteiro fallback</label>
-            <input
-              style={inputStyle}
-              type="text"
-              value={pointerColorInput}
-              onChange={(e) => handleColorChange(e.target.value, setPointerColorInput, setPointerColor, pointerColor)}
-              onBlur={() => handleColorBlur(pointerColorInput, setPointerColorInput, setPointerColor, pointerColor)}
-              placeholder="#ffffff"
-            />
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                style={colorPickerStyle}
+                type="color"
+                value={pointerColor}
+                onChange={(e) => handleColorChange(e.target.value, setPointerColorInput, setPointerColor, pointerColor)}
+              />
+              <input
+                style={{ ...inputStyle, flex: 1 }}
+                type="text"
+                value={pointerColorInput}
+                onChange={(e) => handleColorChange(e.target.value, setPointerColorInput, setPointerColor, pointerColor)}
+                onBlur={() => handleColorBlur(pointerColorInput, setPointerColorInput, setPointerColor, pointerColor)}
+                placeholder="#ffffff"
+              />
+            </div>
           </div>
           <div style={labelStyle}>
             <label>Modo do degradê</label>

@@ -130,6 +130,7 @@ export const PhWidget: React.FC<PhWidgetProps> = ({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    flex: 1,
   };
 
   const barStyle: React.CSSProperties = {
@@ -140,7 +141,7 @@ export const PhWidget: React.FC<PhWidgetProps> = ({
     background: gradient,
     borderRadius: barRadius,
     boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.4)',
-    overflow: 'hidden',
+    overflow: 'visible',
   };
 
   const pointerBaseStyle: React.CSSProperties = {
