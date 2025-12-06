@@ -140,6 +140,7 @@ export const PhWidget: React.FC<PhWidgetProps> = ({
     height: `${heightPct}%`,
     minHeight: '12px',
     background: gradient,
+    // Raio da barra vem do painel de controle para validar estilos no Grafana.
     borderRadius: barRadius,
     boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.4)',
     overflow: 'visible',
