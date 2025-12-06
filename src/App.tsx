@@ -88,6 +88,8 @@ const App: React.FC = () => {
   const panelHeightControl = useNumberControl(320, { min: 220, max: 800 });
   const pointerSizeControl = useNumberControl(28, { min: 10, max: 72 });
   const pointerOffsetControl = useNumberControl(0, { min: -50, max: 50 });
+  const barRadiusControl = useNumberControl(20, { min: 0, max: 40 });
+  const [labelText, setLabelText] = useState('pH');
 
   const handleColorChange = (
     raw: string,
@@ -211,6 +213,8 @@ const App: React.FC = () => {
           heightPct={heightControl.number}
           pointerSize={pointerSizeControl.number}
           pointerOffsetPct={pointerOffsetControl.number}
+          barRadius={barRadiusControl.number}
+          label={labelText}
         />
       </div>
 
@@ -299,6 +303,30 @@ const App: React.FC = () => {
               onChange={(e) => heightControl.handleChange(e.target.value)}
               onKeyDown={heightControl.handleKeyDown}
               onBlur={heightControl.handleBlur}
+            />
+          </div>
+        </div>
+
+        <div style={fieldGroup}>
+          <div style={labelStyle}>
+            <label>Raio da barra (px)</label>
+            <input
+              style={inputStyle}
+              type="text"
+              value={barRadiusControl.text}
+              onChange={(e) => barRadiusControl.handleChange(e.target.value)}
+              onKeyDown={barRadiusControl.handleKeyDown}
+              onBlur={barRadiusControl.handleBlur}
+            />
+          </div>
+          <div style={labelStyle}>
+            <label>Rótulo do widget</label>
+            <input
+              style={inputStyle}
+              type="text"
+              value={labelText}
+              onChange={(e) => setLabelText(e.target.value)}
+              placeholder="pH"
             />
           </div>
         </div>
