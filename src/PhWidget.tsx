@@ -130,6 +130,8 @@ export const PhWidget: React.FC<PhWidgetProps> = ({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    flex: 1,
+    overflow: 'visible',
   };
 
   const barStyle: React.CSSProperties = {
@@ -138,9 +140,10 @@ export const PhWidget: React.FC<PhWidgetProps> = ({
     height: `${heightPct}%`,
     minHeight: '12px',
     background: gradient,
+    // Raio da barra vem do painel de controle para validar estilos no Grafana.
     borderRadius: barRadius,
     boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.4)',
-    overflow: 'hidden',
+    overflow: 'visible',
   };
 
   const pointerBaseStyle: React.CSSProperties = {
@@ -150,6 +153,7 @@ export const PhWidget: React.FC<PhWidgetProps> = ({
     transform: 'translate(-50%, -50%)',
     transition: animate ? 'left 400ms ease' : undefined,
     filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))',
+    zIndex: 2,
   };
 
   const pointerBase = pointerSize * 0.7;

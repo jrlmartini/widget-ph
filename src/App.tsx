@@ -26,22 +26,30 @@ const useNumberControl = (
   const [number, setNumber] = useState(initial);
   const [text, setText] = useState(String(initial));
 
-  const handleChange = (raw: string) => {
-    setText(raw);
-    if (raw.trim() === '') return;
-    const parsed = options.integer ? parseInt(raw, 10) : parseFloat(raw);
-    if (!Number.isNaN(parsed)) {
-      setNumber(clampNumber(parsed, options.min, options.max));
-    }
-  };
-
-  const handleBlur = () => {
-    const normalized = normalizeNumber(text, number, options);
+  const commitValue = (raw: string) => {
+    const normalized = normalizeNumber(raw, number, options);
     setNumber(normalized);
     setText(String(normalized));
   };
 
-  return { number, text, setNumber, setText, handleChange, handleBlur } as const;
+  const handleChange = (raw: string) => {
+    // Não normalize enquanto o usuário digita para evitar travar remoções.
+    setText(raw);
+    const parsed = normalizeNumber(raw, number, options);
+    if (!Number.isNaN(parsed)) {
+      setNumber(parsed);
+    }
+  };
+
+  const handleBlur = () => commitValue(text);
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      commitValue(text);
+    }
+  };
+
+  return { number, text, setNumber, setText, handleChange, handleBlur, handleKeyDown } as const;
 };
 
 const normalizeHex = (raw: string) => {
@@ -80,6 +88,8 @@ const App: React.FC = () => {
   const panelHeightControl = useNumberControl(320, { min: 220, max: 800 });
   const pointerSizeControl = useNumberControl(28, { min: 10, max: 72 });
   const pointerOffsetControl = useNumberControl(0, { min: -50, max: 50 });
+  const barRadiusControl = useNumberControl(20, { min: 0, max: 40 });
+  const [labelText, setLabelText] = useState('pH');
 
   const handleColorChange = (
     raw: string,
@@ -171,6 +181,16 @@ const App: React.FC = () => {
     gap: '12px',
   };
 
+  const colorPickerStyle: React.CSSProperties = {
+    width: 48,
+    height: 36,
+    padding: 0,
+    border: '1px solid rgba(255,255,255,0.1)',
+    background: 'transparent',
+    borderRadius: 6,
+    cursor: 'pointer',
+  };
+
   return (
     <div style={containerStyle}>
       <div style={panelStyle}>
@@ -193,6 +213,8 @@ const App: React.FC = () => {
           heightPct={heightControl.number}
           pointerSize={pointerSizeControl.number}
           pointerOffsetPct={pointerOffsetControl.number}
+          barRadius={barRadiusControl.number}
+          label={labelText}
         />
       </div>
 
@@ -215,9 +237,10 @@ const App: React.FC = () => {
             <label>Min</label>
             <input
               style={inputStyle}
-              type="number"
+              type="text"
               value={minControl.text}
               onChange={(e) => minControl.handleChange(e.target.value)}
+              onKeyDown={minControl.handleKeyDown}
               onBlur={minControl.handleBlur}
             />
           </div>
@@ -225,9 +248,10 @@ const App: React.FC = () => {
             <label>Max</label>
             <input
               style={inputStyle}
-              type="number"
+              type="text"
               value={maxControl.text}
               onChange={(e) => maxControl.handleChange(e.target.value)}
+              onKeyDown={maxControl.handleKeyDown}
               onBlur={maxControl.handleBlur}
             />
           </div>
@@ -238,11 +262,10 @@ const App: React.FC = () => {
             <label>Decimais</label>
             <input
               style={inputStyle}
-              type="number"
-              min={0}
-              max={4}
+              type="text"
               value={decimalsControl.text}
               onChange={(e) => decimalsControl.handleChange(e.target.value)}
+              onKeyDown={decimalsControl.handleKeyDown}
               onBlur={decimalsControl.handleBlur}
             />
           </div>
@@ -250,11 +273,10 @@ const App: React.FC = () => {
             <label>Tamanho da fonte</label>
             <input
               style={inputStyle}
-              type="number"
-              min={12}
-              max={80}
+              type="text"
               value={fontSizeControl.text}
               onChange={(e) => fontSizeControl.handleChange(e.target.value)}
+              onKeyDown={fontSizeControl.handleKeyDown}
               onBlur={fontSizeControl.handleBlur}
             />
           </div>
@@ -265,11 +287,10 @@ const App: React.FC = () => {
             <label>Tamanho da fonte do rótulo</label>
             <input
               style={inputStyle}
-              type="number"
-              min={8}
-              max={48}
+              type="text"
               value={labelFontSizeControl.text}
               onChange={(e) => labelFontSizeControl.handleChange(e.target.value)}
+              onKeyDown={labelFontSizeControl.handleKeyDown}
               onBlur={labelFontSizeControl.handleBlur}
             />
           </div>
@@ -277,11 +298,10 @@ const App: React.FC = () => {
             <label>Altura da barra (%)</label>
             <input
               style={inputStyle}
-              type="number"
-              min={10}
-              max={80}
+              type="text"
               value={heightControl.text}
               onChange={(e) => heightControl.handleChange(e.target.value)}
+              onKeyDown={heightControl.handleKeyDown}
               onBlur={heightControl.handleBlur}
             />
           </div>
@@ -289,25 +309,56 @@ const App: React.FC = () => {
 
         <div style={fieldGroup}>
           <div style={labelStyle}>
-            <label>Cor de fundo</label>
+            <label>Raio da barra (px)</label>
             <input
               style={inputStyle}
               type="text"
-              value={backgroundInput}
-              onChange={(e) => handleColorChange(e.target.value, setBackgroundInput, setBackground, background)}
-              onBlur={() => handleColorBlur(backgroundInput, setBackgroundInput, setBackground, background)}
-              placeholder="#0B1220"
+              value={barRadiusControl.text}
+              onChange={(e) => barRadiusControl.handleChange(e.target.value)}
+              onKeyDown={barRadiusControl.handleKeyDown}
+              onBlur={barRadiusControl.handleBlur}
             />
+          </div>
+          <div style={labelStyle}>
+            <label>Rótulo do widget</label>
+            <input
+              style={inputStyle}
+              type="text"
+              value={labelText}
+              onChange={(e) => setLabelText(e.target.value)}
+              placeholder="pH"
+            />
+          </div>
+        </div>
+
+        <div style={fieldGroup}>
+          <div style={labelStyle}>
+            <label>Cor de fundo</label>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                style={colorPickerStyle}
+                type="color"
+                value={background}
+                onChange={(e) => handleColorChange(e.target.value, setBackgroundInput, setBackground, background)}
+              />
+              <input
+                style={{ ...inputStyle, flex: 1 }}
+                type="text"
+                value={backgroundInput}
+                onChange={(e) => handleColorChange(e.target.value, setBackgroundInput, setBackground, background)}
+                onBlur={() => handleColorBlur(backgroundInput, setBackgroundInput, setBackground, background)}
+                placeholder="#0B1220"
+              />
+            </div>
           </div>
           <div style={labelStyle}>
             <label>Largura do widget (px)</label>
             <input
               style={inputStyle}
-              type="number"
-              min={240}
-              max={1200}
+              type="text"
               value={panelWidthControl.text}
               onChange={(e) => panelWidthControl.handleChange(e.target.value)}
+              onKeyDown={panelWidthControl.handleKeyDown}
               onBlur={panelWidthControl.handleBlur}
             />
           </div>
@@ -318,11 +369,10 @@ const App: React.FC = () => {
             <label>Altura do widget (px)</label>
             <input
               style={inputStyle}
-              type="number"
-              min={220}
-              max={800}
+              type="text"
               value={panelHeightControl.text}
               onChange={(e) => panelHeightControl.handleChange(e.target.value)}
+              onKeyDown={panelHeightControl.handleKeyDown}
               onBlur={panelHeightControl.handleBlur}
             />
           </div>
@@ -330,11 +380,10 @@ const App: React.FC = () => {
             <label>Altura do ponteiro (px)</label>
             <input
               style={inputStyle}
-              type="number"
-              min={10}
-              max={72}
+              type="text"
               value={pointerSizeControl.text}
               onChange={(e) => pointerSizeControl.handleChange(e.target.value)}
+              onKeyDown={pointerSizeControl.handleKeyDown}
               onBlur={pointerSizeControl.handleBlur}
             />
           </div>
@@ -345,11 +394,10 @@ const App: React.FC = () => {
             <label>Offset vertical do ponteiro (% da barra)</label>
             <input
               style={inputStyle}
-              type="number"
-              min={-50}
-              max={50}
+              type="text"
               value={pointerOffsetControl.text}
               onChange={(e) => pointerOffsetControl.handleChange(e.target.value)}
+              onKeyDown={pointerOffsetControl.handleKeyDown}
               onBlur={pointerOffsetControl.handleBlur}
             />
           </div>
@@ -366,39 +414,63 @@ const App: React.FC = () => {
         <div style={fieldGroup}>
           <div style={labelStyle}>
             <label>Cor inicial</label>
-            <input
-              style={inputStyle}
-              type="text"
-              value={startColorInput}
-              onChange={(e) => handleColorChange(e.target.value, setStartColorInput, setStartColor, startColor)}
-              onBlur={() => handleColorBlur(startColorInput, setStartColorInput, setStartColor, startColor)}
-              placeholder="#F87171"
-            />
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                style={colorPickerStyle}
+                type="color"
+                value={startColor}
+                onChange={(e) => handleColorChange(e.target.value, setStartColorInput, setStartColor, startColor)}
+              />
+              <input
+                style={{ ...inputStyle, flex: 1 }}
+                type="text"
+                value={startColorInput}
+                onChange={(e) => handleColorChange(e.target.value, setStartColorInput, setStartColor, startColor)}
+                onBlur={() => handleColorBlur(startColorInput, setStartColorInput, setStartColor, startColor)}
+                placeholder="#F87171"
+              />
+            </div>
           </div>
           <div style={labelStyle}>
             <label>Cor final</label>
-            <input
-              style={inputStyle}
-              type="text"
-              value={endColorInput}
-              onChange={(e) => handleColorChange(e.target.value, setEndColorInput, setEndColor, endColor)}
-              onBlur={() => handleColorBlur(endColorInput, setEndColorInput, setEndColor, endColor)}
-              placeholder="#34D399"
-            />
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                style={colorPickerStyle}
+                type="color"
+                value={endColor}
+                onChange={(e) => handleColorChange(e.target.value, setEndColorInput, setEndColor, endColor)}
+              />
+              <input
+                style={{ ...inputStyle, flex: 1 }}
+                type="text"
+                value={endColorInput}
+                onChange={(e) => handleColorChange(e.target.value, setEndColorInput, setEndColor, endColor)}
+                onBlur={() => handleColorBlur(endColorInput, setEndColorInput, setEndColor, endColor)}
+                placeholder="#34D399"
+              />
+            </div>
           </div>
         </div>
 
         {gradientMode === 'three' && (
           <div style={labelStyle}>
             <label>Cor intermediária</label>
-            <input
-              style={inputStyle}
-              type="text"
-              value={midColorInput}
-              onChange={(e) => handleColorChange(e.target.value, setMidColorInput, setMidColor, midColor)}
-              onBlur={() => handleColorBlur(midColorInput, setMidColorInput, setMidColor, midColor)}
-              placeholder="#60A5FA"
-            />
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                style={colorPickerStyle}
+                type="color"
+                value={midColor}
+                onChange={(e) => handleColorChange(e.target.value, setMidColorInput, setMidColor, midColor)}
+              />
+              <input
+                style={{ ...inputStyle, flex: 1 }}
+                type="text"
+                value={midColorInput}
+                onChange={(e) => handleColorChange(e.target.value, setMidColorInput, setMidColor, midColor)}
+                onBlur={() => handleColorBlur(midColorInput, setMidColorInput, setMidColor, midColor)}
+                placeholder="#60A5FA"
+              />
+            </div>
           </div>
         )}
 
@@ -416,14 +488,22 @@ const App: React.FC = () => {
         <div style={fieldGroup}>
           <div style={labelStyle}>
             <label>Cor do ponteiro fallback</label>
-            <input
-              style={inputStyle}
-              type="text"
-              value={pointerColorInput}
-              onChange={(e) => handleColorChange(e.target.value, setPointerColorInput, setPointerColor, pointerColor)}
-              onBlur={() => handleColorBlur(pointerColorInput, setPointerColorInput, setPointerColor, pointerColor)}
-              placeholder="#ffffff"
-            />
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                style={colorPickerStyle}
+                type="color"
+                value={pointerColor}
+                onChange={(e) => handleColorChange(e.target.value, setPointerColorInput, setPointerColor, pointerColor)}
+              />
+              <input
+                style={{ ...inputStyle, flex: 1 }}
+                type="text"
+                value={pointerColorInput}
+                onChange={(e) => handleColorChange(e.target.value, setPointerColorInput, setPointerColor, pointerColor)}
+                onBlur={() => handleColorBlur(pointerColorInput, setPointerColorInput, setPointerColor, pointerColor)}
+                placeholder="#ffffff"
+              />
+            </div>
           </div>
           <div style={labelStyle}>
             <label>Modo do degradê</label>

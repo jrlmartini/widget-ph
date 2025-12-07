@@ -9,3 +9,4 @@ Protótipo de um widget de pH responsivo pensado para ser adaptado ao Grafana Pa
 - `npm run preview` — pré-visualização do build.
 
 > Obs.: o ambiente deste exercício pode não ter Node.js disponível. Instale-o localmente para testar o protótipo.
+
